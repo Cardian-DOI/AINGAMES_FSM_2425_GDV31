@@ -14,12 +14,13 @@ public class PlayerTankController : MonoBehaviour
     private Transform bulletSpawnPoint;    
     private float curSpeed, targetSpeed, rotSpeed;
     private float turretRotSpeed = 10.0f;
-    
+    private float timer = 0.5f;
+
     //Bullet shooting rate
     protected float shootRate;
     protected float elapsedTime;
 
-    public GameObject PlayerTank;
+    public GameObject Player;
 
     private void Start()
     {
@@ -89,7 +90,23 @@ public class PlayerTankController : MonoBehaviour
 
         //Determine current speed
         curSpeed = Mathf.Lerp(curSpeed, targetSpeed, 7.0f * Time.deltaTime);
-        transform.Translate(Vector3.forward * Time.deltaTime * curSpeed);    
+        transform.Translate(Vector3.forward * Time.deltaTime * curSpeed);
+        if (timer > 0)
+        {
+            timer -= Time.deltaTime;
+        }
+        if (timer <= 0)
+        {
+            //The position of the waypoint will update to the player's position
+            UpdatePosition();
+            timer = 0.5f;
+        }
+    }
+
+    void UpdatePosition()
+    {
+        //The wayPoint's position will now be the player's current position.
+        Player.transform.position = transform.position;
     }
 
     private void UpdateWeapon()
