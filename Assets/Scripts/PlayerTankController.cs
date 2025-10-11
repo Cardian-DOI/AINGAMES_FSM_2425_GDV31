@@ -19,6 +19,8 @@ public class PlayerTankController : MonoBehaviour
     protected float shootRate;
     protected float elapsedTime;
 
+    public GameObject PlayerTank;
+
     private void Start()
     {
         //Tank Settings
