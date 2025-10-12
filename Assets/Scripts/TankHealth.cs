@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class TankHealth : MonoBehaviour
 {
@@ -14,19 +15,32 @@ public class TankHealth : MonoBehaviour
     [SerializeField]
     private int explosionCount = 5; // How many extra explosions to spawn
 
+    [Header("Health Bar Settings")]
+    [SerializeField] private Slider healthBar;
+
     private bool isDead = false;
     
     private void Start()
     {
         currentHealth = maxHealth;
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = currentHealth;
+        }
     }
 
-    // Function to take damage
     public void TakeDamage(int damage)
     {
         if (isDead) return;
 
         currentHealth -= damage;
+
+        // Update health bar
+        if (healthBar != null)
+        {
+            healthBar.value = currentHealth;
+        }
 
         if (currentHealth <= 0)
         {

@@ -12,13 +12,13 @@ public class EnemyBehavior : MonoBehaviour
     private float turretRotSpeed = 10.0f;
     private Vector3 targetPos;
 
-    // ★ Combined Player + Enemy target
     [SerializeField]
-    private Transform target; // This replaces both "Player" and "EnemyTankTarget"
+    private GameObject target; 
 
     //Bullet shooting rate
-    public float shootRate = 2.0f;
+    public float shootDelay = 2.0f;
     private float elapsedTime;
+    public float firingRangePercent = 50;
 
     // Patrol + detection
     [Header("Patrol Settings")]
@@ -35,14 +35,6 @@ public class EnemyBehavior : MonoBehaviour
     {
         turret = transform.GetChild(0).transform;
         bulletSpawnPoint = turret.GetChild(0).transform;
-
-        // Optional: auto-assign player if not set
-        if (target == null)
-        {
-            GameObject playerObj = GameObject.FindWithTag("Player");
-            if (playerObj != null)
-                target = playerObj.transform;
-        }
     }
 
     private void Update()
@@ -64,12 +56,12 @@ public class EnemyBehavior : MonoBehaviour
     {
         if (target == null) return;
 
-        float distance = Vector3.Distance(transform.position, target.position);
+        float distance = Vector3.Distance(transform.position, target.transform.position);
 
         if (distance <= detectionRange)
         {
             RaycastHit hit;
-            Vector3 dir = (target.position - transform.position).normalized;
+            Vector3 dir = (target.transform.position - transform.position).normalized;
 
             if (Physics.Raycast(transform.position + Vector3.up, dir, out hit, detectionRange))
             {
@@ -103,19 +95,19 @@ public class EnemyBehavior : MonoBehaviour
 
     private void UpdateControl()
     {
-        targetPos = new Vector3(target.position.x, transform.position.y, target.position.z);
-        float distance = Vector3.Distance(transform.position, target.position);
+        targetPos = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
+        float distance = Vector3.Distance(transform.position, target.transform.position);
         if (targetDetected == false)
         {
-            Vector3 direction = (target.position - transform.position).normalized;
+            Vector3 direction = (target.transform.position - transform.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turretRotSpeed * 0.4f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turretRotSpeed * 0.2f);
         }
-        else if (distance >= detectionRange/1.5f)
+        else if (distance >= detectionRange * firingRangePercent/100) //Chase 
         {
-            Vector3 direction = (target.position - transform.position).normalized;
+            Vector3 direction = (target.transform.position - transform.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turretRotSpeed * 0.4f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turretRotSpeed * 0.2f);
             transform.position = Vector3.MoveTowards(transform.position, targetPos, patrolSpeed* 1.075f * Time.deltaTime);
         }
     }
@@ -124,14 +116,14 @@ public class EnemyBehavior : MonoBehaviour
     private void UpdateWeapon()
     {
         if (!targetDetected || target == null) return;
-
-        Vector3 direction = (target.position - transform.position).normalized;
+        float distance = Vector3.Distance(transform.position, target.transform.position);
+        Vector3 direction = (target.transform.position - transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         turret.transform.rotation = Quaternion.Slerp(turret.transform.rotation, targetRotation, Time.deltaTime * turretRotSpeed);
 
-        if (Time.time >= elapsedTime)
+        if (Time.time >= elapsedTime && distance < detectionRange * firingRangePercent/100) //Shoot only when static
         {
-            elapsedTime = Time.time + shootRate;
+            elapsedTime = Time.time + shootDelay;
             Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
         }
     }
@@ -140,5 +132,7 @@ public class EnemyBehavior : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, detectionRange * firingRangePercent/100);
     }
 }
