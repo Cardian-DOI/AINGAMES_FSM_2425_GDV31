@@ -1646,10 +1646,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerTank
       objectReference: {fileID: 0}
-    - target: {fileID: 1663211502884150, guid: 9b4cbb0b3fdc35a41854150787f02766, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     - target: {fileID: 4967583615090912, guid: 9b4cbb0b3fdc35a41854150787f02766, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16
@@ -1688,21 +1684,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4967583615090912, guid: 9b4cbb0b3fdc35a41854150787f02766, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 338437330434086247, guid: 9b4cbb0b3fdc35a41854150787f02766,
-        type: 3}
-      propertyPath: maxHealth
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 338437330434086247, guid: 9b4cbb0b3fdc35a41854150787f02766,
-        type: 3}
-      propertyPath: explosionCount
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 3822504457426550032, guid: 9b4cbb0b3fdc35a41854150787f02766,
-        type: 3}
-      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
