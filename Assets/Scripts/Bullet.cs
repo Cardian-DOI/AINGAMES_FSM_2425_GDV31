@@ -3,39 +3,41 @@ using System.Collections;
 
 public class Bullet : MonoBehaviour
 {
-    //Explosion Effect
-    [SerializeField] 
+    [SerializeField]
     private GameObject explosion;
 
-    [SerializeField] 
+    [SerializeField]
     private float speed = 50.0f;
-    [SerializeField] 
+    [SerializeField]
     private float lifeTime = 3.0f;
-    [SerializeField] 
+    [SerializeField]
     private int damage = 50;
-
-  
     private void Start()
     {
-        // Simply destroy the gameobject after the given lifeTime duration
+        // Destroy bullet after lifetime expires
         Destroy(gameObject, lifeTime);
     }
 
-   
     private void Update()
     {
-        // Make the object always move forward
-        transform.position += 
-			transform.forward * speed * Time.deltaTime;       
+        // Move bullet forward constantly
+        transform.position += transform.forward * speed * Time.deltaTime;
     }
 
-   
     private void OnCollisionEnter(Collision collision)
     {
-        // Spawn the explosion effect on the collision point
+        // Deal damage to any object with a TankHealth component
+        TankHealth health = collision.gameObject.GetComponent<TankHealth>();
+        if (health != null)
+        {
+            health.TakeDamage(damage);
+        }
+
+        // Spawn explosion effect
         ContactPoint contact = collision.contacts[0];
         Instantiate(explosion, contact.point, Quaternion.identity);
-        // Destroy gameobject since it already collided with something
+
+        // Destroy the bullet after collision
         Destroy(gameObject);
     }
 }
